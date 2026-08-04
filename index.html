@@ -249,7 +249,7 @@
             filter: drop-shadow(0 0 10px rgba(255, 145, 113, 0.5));
         }
 
-        /* FORM STYLES FIX PER MOBILE */
+        /* FORM STYLES */
         .waitlist-box {
             margin-top: 1.2rem;
             display: flex;
@@ -436,7 +436,7 @@
             </p>
         </div>
 
-        <!-- SLIDE 3 (RICHESTA REINTEGRO CON FORM) -->
+        <!-- SLIDE 3 (FORM + FIREBASE INTEGRATO) -->
         <div class="slide" id="slide3">
             <div class="slide-logo-container">
                 <img src="profilo_yuri.svg" alt="Profilo Yuri">
@@ -475,7 +475,24 @@
 
     <div class="scroll-hint">Scorri verso il basso ↓</div>
 
+    <!-- FIREBASE SDK COMPAT (LIBRERIE CLIENT) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
+        // CONFIGURAZIONE FIREBASE
+        const firebaseConfig = {
+            databaseURL: "https://my-birthday-c655e-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        // Inizializzazione Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Messaggio di conferma connessione in console web
+        console.log("collegato con successo");
+
+        // ANIMAZIONI GSAP
         gsap.registerPlugin(ScrollTrigger);
 
         window.addEventListener('load', () => {
@@ -522,6 +539,7 @@
         gsap.to("#cloud1", { x: 300, duration: 20, repeat: -1, yoyo: true, ease: "none" });
         gsap.to("#cloud2", { x: -250, duration: 25, repeat: -1, yoyo: true, ease: "none" });
 
+        // EFFETTO CUORI
         function spawnHearts(e) {
             const total = 14;
             for (let i = 0; i < total; i++) {
@@ -548,6 +566,7 @@
             }
         }
 
+        // SALVATAGGIO IN FIREBASE
         function handleWaitlistSubmit(e) {
             const input = document.getElementById('guestNameInput');
             const msg = document.getElementById('notification-msg');
@@ -559,11 +578,22 @@
                 return;
             }
 
-            input.style.borderColor = 'rgba(255, 145, 113, 0.4)';
-            msg.innerHTML = `<span class="success-text">✅ Fantastico ${val}! Sei registrato in lista prioritaria! 🎉</span>`;
-            
-            spawnHearts(e);
-            input.value = '';
+            // Formattazione richiesta: Nome Cognome (external) (so)
+            const formattedName = `${val} (external) (so)`;
+
+            // Salva nel nodo "invitati" del Realtime Database
+            database.ref('invitati').push({
+                nome: formattedName,
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                input.style.borderColor = 'rgba(255, 145, 113, 0.4)';
+                msg.innerHTML = `<span class="success-text">✅ Fantastico ${val}! Sei registrato in lista prioritaria! 🎉</span>`;
+                spawnHearts(e);
+                input.value = '';
+            }).catch((error) => {
+                console.error("Errore salvataggio Firebase:", error);
+                msg.innerHTML = '<span class="error-text">❌ Errore durante la registrazione. Riprova.</span>';
+            });
         }
     </script>
 </body>
