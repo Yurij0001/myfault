@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#fdfbf7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Comunicazione Ufficiale - Yuri & Yuri Team</title>
+    
+    <!-- GSAP & ScrollTrigger Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-dark: #0d0b18;
+            --accent-coral: #ff9171;
+            --accent-gold: #f5c54e;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-light: #f8fafc;
+            --text-sub: #cbd5e1;
+            --splash-bg: #fdfbf7;
+        }
+
+        html {
+            background-color: var(--splash-bg);
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            transition: background-color 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html.phase-two {
+            background-color: var(--bg-dark);
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            background-color: transparent;
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* SPLASH SCREEN */
+        #splashScreen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%;
+            background-color: var(--splash-bg);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 1s ease, opacity 0.8s ease, visibility 0.8s;
+            touch-action: none;
+            padding: 20px;
+        }
+
+        #splashScreen.phase-two {
+            background-color: #090d16;
+        }
+
+        #splashScreen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-logo {
+            width: 110px;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseLogo 1.6s infinite ease-in-out;
+        }
+
+        .splash-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .splash-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 40px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #090d16;
+            transition: color 1s ease;
+        }
+
+        #splashScreen.phase-two .splash-footer {
+            color: #64748b;
+        }
+
+        .author-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .verified-badge {
+            width: 14px;
+            height: 14px;
+        }
+
+        .sponsor-text {
+            font-size: 0.75rem;
+            opacity: 0.85;
+            letter-spacing: 1.5px;
+            text-transform: none;
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.08); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
+        /* PARALLAX SVG BACKGROUND */
+        svg.parallax-bg {
+            display: block;
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            z-index: 1;
+            top: 0; left: 0;
+            pointer-events: none;
+        }
+
+        .scrollElement {
+            position: absolute;
+            height: 4200px;
+            width: 100%;
+            top: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* STORY SLIDES CONTAINER */
+        .story-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            padding: 16px;
+        }
+
+        .slide {
+            position: absolute;
+            text-align: center;
+            width: 100%;
+            max-width: 480px;
+            opacity: 0;
+            transform: translateY(40px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(13, 11, 24, 0.9) 100%);
+            padding: 2rem 1.4rem;
+            border-radius: 28px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+
+        .slide.active-slide {
+            pointer-events: auto !important;
+        }
+
+        .slide h1, .slide h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #FFFFFF 0%, #D1D5DB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .slide p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-sub);
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+        }
+
+        .highlight {
+            color: var(--accent-coral);
+            font-weight: 700;
+            text-shadow: 0 0 12px rgba(255, 145, 113, 0.4);
+        }
+
+        .badge-tag {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 50px;
+            background: rgba(255, 145, 113, 0.15);
+            border: 1px solid var(--accent-coral);
+            color: var(--accent-coral);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .slide-logo-container {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 12px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 145, 113, 0.5));
+        }
+
+        /* FORM STYLES FIX PER MOBILE */
+        .waitlist-box {
+            margin-top: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 999;
+            pointer-events: auto !important;
+        }
+
+        .guest-input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            text-align: center;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(255, 145, 113, 0.6);
+            border-radius: 50px;
+            outline: none;
+            backdrop-filter: blur(10px);
+            -webkit-appearance: none;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1000;
+            pointer-events: auto !important;
+            touch-action: manipulation;
+        }
+
+        .guest-input:focus {
+            border-color: var(--accent-coral);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 20px rgba(255, 145, 113, 0.6);
+        }
+
+        .action-btn {
+            width: 100%;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 0.9rem 1.8rem;
+            background: linear-gradient(135deg, var(--accent-coral) 0%, #ff6b4a 100%);
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 145, 113, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1000;
+            pointer-events: auto !important;
+            touch-action: manipulation;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+        }
+
+        .scroll-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, -6px); }
+            60% { transform: translate(-50%, -3px); }
+        }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatUpAndFade 2s ease-out forwards;
+        }
+
+        @keyframes floatUpAndFade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.6); }
+            100% { opacity: 0; transform: translate(calc(-50% + var(--drift)), -200px) scale(1.2) rotate(var(--rotation)); }
+        }
+
+        #notification-msg {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-height: 20px;
+            transition: all 0.3s ease;
+        }
+        .success-text { color: #4ade80; }
+        .error-text { color: #f87171; }
+    </style>
+</head>
+<body>
+
+    <!-- SPLASH SCREEN -->
+    <div id="splashScreen">
+        <div class="splash-logo">
+            <img src="profilo_yuri.svg" alt="Profilo Yuri">
+        </div>
+        <div class="splash-footer">
+            <div class="author-row">
+                <span>BY YURI</span>
+                <svg class="verified-badge" viewBox="0 0 40 40">
+                    <path fill="#0095f6" fill-rule="evenodd" d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z"/>
+                </svg>
+            </div>
+            <span class="sponsor-text">sponsored by Aylo®</span>
+        </div>
+    </div>
+
+    <!-- PARALLAX BACKGROUND SVG -->
+    <svg class="parallax-bg" viewBox="0 0 750 500" preserveAspectRatio="xMidYMax slice">
+        <defs>
+            <radialGradient id="bg_grad" cx="375" cy="-30" r="318.69" gradientUnits="userSpaceOnUse">
+                <stop offset="0.1" stop-color="#F5C54E" id="sun" />
+                <stop offset="0.2" stop-color="#FFDBA6" />
+                <stop offset="0.4" stop-color="#F7BB93" />
+                <stop offset="0.6" stop-color="#F2995E" />
+                <stop offset="0.8" stop-color="#f07560" />
+                <stop offset="1.0" stop-color="#0d0b18" />
+            </radialGradient>
+            <linearGradient id="hill_grad1" x1="0" y1="300" x2="750" y2="500" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#2c2c50" />
+                <stop offset="1" stop-color="#110e26" />
+            </linearGradient>
+            <linearGradient id="hill_grad2" x1="0" y1="200" x2="750" y2="500" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#45224A" />
+                <stop offset="1" stop-color="#18132b" />
+            </linearGradient>
+        </defs>
+
+        <rect id="bg" width="750" height="500" fill="url(#bg_grad)" />
+
+        <g id="clouds" fill="#ffffff" opacity="0.15">
+            <path id="cloud1" d="M100 150 Q120 120 150 140 Q180 110 220 130 Q250 120 270 150 Z" />
+            <path id="cloud2" d="M500 100 Q520 70 560 90 Q590 60 630 85 Q660 70 680 100 Z" />
+        </g>
+
+        <!-- Parallax Hills -->
+        <path id="hill2" d="M0 380 Q180 320 350 370 Q520 420 750 340 L750 500 L0 500 Z" fill="url(#hill_grad2)" />
+        <path id="hill1" d="M0 420 Q220 360 450 430 Q600 390 750 440 L750 500 L0 500 Z" fill="url(#hill_grad1)" />
+    </svg>
+
+    <div class="scrollElement"></div>
+
+    <!-- STORY SLIDES CONTAINER -->
+    <div class="story-container">
+        
+        <!-- SLIDE 1 -->
+        <div class="slide active-slide" id="slide1">
+            <div class="slide-logo-container">
+                <img src="profilo_yuri.svg" alt="Profilo Yuri">
+            </div>
+            <span class="badge-tag">Comunicato Ufficiale</span>
+            <h1>Ci Scusiamo per l'Inconveniente</h1>
+            <p>
+                A causa di un'inaspettata <span class="highlight">ottimizzazione automatica dei sistemi di accreditamento</span> e della limitazione di capienza della location, si sono verificate delle complicanze nell'invio dei pass.
+            </p>
+            <p>
+                Purtroppo, alcuni ospiti ed amici sono stati momentaneamente estromessi dalle conferme automatiche.
+            </p>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="slide" id="slide2">
+            <div class="slide-logo-container">
+                <img src="profilo_yuri.svg" alt="Profilo Yuri">
+            </div>
+            <span class="badge-tag">Riorganizzazione Ingressi</span>
+            <h2>Selezionatissimo Club</h2>
+            <p>
+                Non temere, non ti abbiamo dimenticato! Abbiamo riservato una procedura speciale di riassegnazione prioritaria per permetterti di accedere al party.
+            </p>
+        </div>
+
+        <!-- SLIDE 3 (RICHESTA REINTEGRO CON FORM) -->
+        <div class="slide" id="slide3">
+            <div class="slide-logo-container">
+                <img src="profilo_yuri.svg" alt="Profilo Yuri">
+            </div>
+            <span class="badge-tag">Richiesta di Reintegro</span>
+            <h2>Conferma i Tuoi Dati</h2>
+            <p>Inserisci il tuo nome per registrare ufficialmente la priorità:</p>
+
+            <div class="waitlist-box">
+                <input type="text" id="guestNameInput" class="guest-input" placeholder="Nome e Cognome..." autocomplete="off">
+                <button class="action-btn" id="submitBtn" onclick="handleWaitlistSubmit(event)">Conferma Reintegro ✨</button>
+                <div id="notification-msg"></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4 -->
+        <div class="slide" id="slide4">
+            <div class="slide-logo-container">
+                <img src="profilo_yuri.svg" alt="Profilo Yuri">
+            </div>
+            <span class="badge-tag">Ringraziamenti</span>
+            <h2>Ci Vediamo al Party!</h2>
+            <p>
+                Lavoriamo incessantemente per far sì che tutti i nostri amici possano celebrare insieme a noi.
+            </p>
+            <br>
+            <p style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--accent-coral); font-weight: 700;">
+                BY YURI
+            </p>
+            <p style="font-size: 0.75rem; color: #64748b; margin-top: 8px;">
+                Con la collaborazione speciale di Aylo®
+            </p>
+        </div>
+
+    </div>
+
+    <div class="scroll-hint">Scorri verso il basso ↓</div>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splashScreen');
+            
+            setTimeout(() => {
+                splash.classList.add('phase-two');
+                document.documentElement.classList.add('phase-two');
+            }, 1200);
+
+            setTimeout(() => {
+                splash.classList.add('fade-out');
+            }, 2500);
+        });
+
+        let storyTL = gsap.timeline();
+
+        ScrollTrigger.create({
+            animation: storyTL,
+            trigger: ".scrollElement",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 0.6
+        });
+
+        const slides = ["#slide1", "#slide2", "#slide3", "#slide4"];
+        slides.forEach((slide, index) => {
+            storyTL.to(slide, { 
+                opacity: 1, 
+                y: 0, 
+                duration: 1,
+                onStart: () => {
+                    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active-slide'));
+                    document.querySelector(slide).classList.add('active-slide');
+                }
+            });
+            if (index < slides.length - 1) {
+                storyTL.to(slide, { opacity: 0, y: -40, duration: 1 }, "+=0.8");
+            }
+        });
+
+        gsap.to("#hill1", { y: -100, scrollTrigger: { trigger: ".scrollElement", start: "top top", end: "bottom bottom", scrub: true } });
+        gsap.to("#hill2", { y: -50, scrollTrigger: { trigger: ".scrollElement", start: "top top", end: "bottom bottom", scrub: true } });
+        gsap.to("#cloud1", { x: 300, duration: 20, repeat: -1, yoyo: true, ease: "none" });
+        gsap.to("#cloud2", { x: -250, duration: 25, repeat: -1, yoyo: true, ease: "none" });
+
+        function spawnHearts(e) {
+            const total = 14;
+            for (let i = 0; i < total; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.innerHTML = `
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#ff9171">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    `;
+                    const rect = e.target.getBoundingClientRect();
+                    heart.style.left = `${rect.left + rect.width / 2}px`;
+                    heart.style.top = `${rect.top + rect.height / 2}px`;
+                    
+                    const drift = (Math.random() - 0.5) * 160;
+                    const rotation = (Math.random() - 0.5) * 60;
+                    heart.style.setProperty('--drift', `${drift}px`);
+                    heart.style.setProperty('--rotation', `${rotation}deg`);
+
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 2000);
+                }, i * 40);
+            }
+        }
+
+        function handleWaitlistSubmit(e) {
+            const input = document.getElementById('guestNameInput');
+            const msg = document.getElementById('notification-msg');
+            const val = input.value.trim();
+
+            if (val.split(/\s+/).length < 2) {
+                msg.innerHTML = '<span class="error-text">⚠️ Per favore, inserisci Nome e Cognome completi.</span>';
+                input.style.borderColor = '#ef4444';
+                return;
+            }
+
+            input.style.borderColor = 'rgba(255, 145, 113, 0.4)';
+            msg.innerHTML = `<span class="success-text">✅ Fantastico ${val}! Sei registrato in lista prioritaria! 🎉</span>`;
+            
+            spawnHearts(e);
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
