@@ -3,27 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <!-- Configurazione Web App iOS / Apple -->
+    <meta name="theme-color" content="#fdfbf7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Yuri Party">
-    
-    <!-- Configurazione Colore Barra Browser / Android -->
-    <meta name="theme-color" content="#fdfbf7">
-
     <title>Comunicazione Ufficiale - Yuri & Yuri Team</title>
     
-    <!-- Favicon e Icone Apple (PNG e SVG vettoriale) -->
-    <link rel="apple-touch-icon" href="profilo_yuri_w.png">
-    <link rel="icon" type="image/svg+xml" href="profilo_yuri_w.svg">
-    <link rel="icon" type="image/png" sizes="192x192" href="profilo_yuri_w.png">
-    <link rel="manifest" href="manifest.json">
-
     <!-- GSAP & ScrollTrigger Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -200,10 +187,13 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             pointer-events: none;
-            transition: all 0.4s ease;
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
+        /* La prima slide parte subito visibile */
         .slide.active-slide {
+            opacity: 1;
+            transform: translateY(0);
             pointer-events: auto !important;
         }
 
@@ -262,7 +252,7 @@
             filter: drop-shadow(0 0 10px rgba(255, 145, 113, 0.5));
         }
 
-        /* FORM STYLES */
+        /* FORM STYLES FIX PER MOBILE */
         .waitlist-box {
             margin-top: 1.2rem;
             display: flex;
@@ -422,19 +412,21 @@
     <!-- STORY SLIDES CONTAINER -->
     <div class="story-container">
         
-        <!-- SLIDE 1 -->
+        <!-- SLIDE 1 (Attiva di default) -->
         <div class="slide active-slide" id="slide1">
             <div class="slide-logo-container">
                 <img src="profilo_yuri.svg" alt="Profilo Yuri">
             </div>
-            <span class="badge-tag">Comunicato Ufficiale</span>
+            <span class="badge-tag">Comunichiamo che...</span>
             <h1>Ci Scusiamo per l'Inconveniente</h1>
             <p>
-                A causa di un'inaspettata <span class="highlight">ottimizzazione automatica dei sistemi di accreditamento</span> e della limitazione di capienza della location, si sono verificate delle complicanze nell'invio dei pass.
+                <p>
+    A causa di un imprevisto <span class="highlight">overflow di richieste</span> e della <span class="highlight">capienza limitata della location</span>, siamo stati costretti a <span class="highlight">contingentare gli accessi</span> e a escludere momentaneamente alcuni ospiti.
+</p>
             </p>
             <p>
-                Purtroppo, alcuni ospiti ed amici sono stati momentaneamente estromessi dalle conferme automatiche.
-            </p>
+    Di conseguenza, alcuni amici ed ospiti  sono finiti <span class="highlight">temporaneamente in stand-by</span> nel flusso di accreditamento.
+</p>
         </div>
 
         <!-- SLIDE 2 -->
@@ -443,24 +435,24 @@
                 <img src="profilo_yuri.svg" alt="Profilo Yuri">
             </div>
             <span class="badge-tag">Riorganizzazione Ingressi</span>
-            <h2>Selezionatissimo Club</h2>
+            <h2>Selezioni ingressi</h2>
             <p>
-                Non temere, non ti abbiamo dimenticato! Abbiamo riservato una procedura speciale di riassegnazione prioritaria per permetterti di accedere al party.
+                Non temere, non ti abbiamo dimenticato! Abbiamo riservato una procedura speciale di riassegnazione prioritaria per permetterti di accedere al party non appana avverrà un calo delle partecipazioni.
             </p>
         </div>
 
-        <!-- SLIDE 3 (FORM + FIREBASE INTEGRATO) -->
+        <!-- SLIDE 3 (RICHIESTA REINTEGRO CON FORM) -->
         <div class="slide" id="slide3">
             <div class="slide-logo-container">
                 <img src="profilo_yuri.svg" alt="Profilo Yuri">
             </div>
             <span class="badge-tag">Richiesta di Reintegro</span>
             <h2>Conferma i Tuoi Dati</h2>
-            <p>Inserisci il tuo nome per registrare ufficialmente la priorità:</p>
+            <p>Inserisci il tuo nome per registrarti in lista di accreditamento</p>
 
             <div class="waitlist-box">
                 <input type="text" id="guestNameInput" class="guest-input" placeholder="Nome e Cognome..." autocomplete="off">
-                <button class="action-btn" id="submitBtn" onclick="handleWaitlistSubmit(event)">Conferma Reintegro ✨</button>
+                <button class="action-btn" id="submitBtn" onclick="handleWaitlistSubmit(event)">Conferma</button>
                 <div id="notification-msg"></div>
             </div>
         </div>
@@ -473,7 +465,7 @@
             <span class="badge-tag">Ringraziamenti</span>
             <h2>Ci Vediamo al Party!</h2>
             <p>
-                Lavoriamo incessantemente per far sì che tutti i nostri amici possano celebrare insieme a noi.
+                Lavoriamo incessantemente per far sì che tutti i nostri amici possano celebrare insieme a noi.<br> verrai tempestivamente avvisato appena verrà confermata la tua richiesta
             </p>
             <br>
             <p style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--accent-coral); font-weight: 700;">
@@ -486,26 +478,9 @@
 
     </div>
 
-    <div class="scroll-hint">Scorri verso il basso ↓</div>
-
-    <!-- FIREBASE SDK COMPAT (LIBRERIE CLIENT) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <div class="scroll-hint">Scorri verso l'alto ⭡</div>
 
     <script>
-        // CONFIGURAZIONE FIREBASE
-        const firebaseConfig = {
-            databaseURL: "https://my-birthday-c655e-default-rtdb.europe-west1.firebasedatabase.app"
-        };
-
-        // Inizializzazione Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Messaggio di conferma connessione in console web
-        console.log("collegato con successo");
-
-        // ANIMAZIONI GSAP
         gsap.registerPlugin(ScrollTrigger);
 
         window.addEventListener('load', () => {
@@ -532,18 +507,32 @@
         });
 
         const slides = ["#slide1", "#slide2", "#slide3", "#slide4"];
+
         slides.forEach((slide, index) => {
-            storyTL.to(slide, { 
-                opacity: 1, 
-                y: 0, 
-                duration: 1,
-                onStart: () => {
-                    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active-slide'));
-                    document.querySelector(slide).classList.add('active-slide');
+            if (index === 0) {
+                // La slide 1 parte già visibile; quando si scrolla sfuma via verso l'alto
+                storyTL.to(slide, { 
+                    opacity: 0, 
+                    y: -40, 
+                    duration: 1,
+                    onLeave: () => document.querySelector(slide).classList.remove('active-slide'),
+                    onEnterBack: () => document.querySelector(slide).classList.add('active-slide')
+                }, "+=0.8");
+            } else {
+                // Le slide successive entrano dal basso
+                storyTL.to(slide, { 
+                    opacity: 1, 
+                    y: 0, 
+                    duration: 1,
+                    onStart: () => {
+                        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active-slide'));
+                        document.querySelector(slide).classList.add('active-slide');
+                    }
+                });
+
+                if (index < slides.length - 1) {
+                    storyTL.to(slide, { opacity: 0, y: -40, duration: 1 }, "+=0.8");
                 }
-            });
-            if (index < slides.length - 1) {
-                storyTL.to(slide, { opacity: 0, y: -40, duration: 1 }, "+=0.8");
             }
         });
 
@@ -552,7 +541,6 @@
         gsap.to("#cloud1", { x: 300, duration: 20, repeat: -1, yoyo: true, ease: "none" });
         gsap.to("#cloud2", { x: -250, duration: 25, repeat: -1, yoyo: true, ease: "none" });
 
-        // EFFETTO CUORI
         function spawnHearts(e) {
             const total = 14;
             for (let i = 0; i < total; i++) {
@@ -579,7 +567,6 @@
             }
         }
 
-        // SALVATAGGIO IN FIREBASE
         function handleWaitlistSubmit(e) {
             const input = document.getElementById('guestNameInput');
             const msg = document.getElementById('notification-msg');
@@ -591,22 +578,11 @@
                 return;
             }
 
-            // Formattazione richiesta: Nome Cognome (external) (so)
-            const formattedName = `${val} (external) (so)`;
-
-            // Salva nel nodo "invitati" del Realtime Database
-            database.ref('invitati').push({
-                nome: formattedName,
-                timestamp: new Date().toISOString()
-            }).then(() => {
-                input.style.borderColor = 'rgba(255, 145, 113, 0.4)';
-                msg.innerHTML = `<span class="success-text">✅ Fantastico ${val}! Sei registrato in lista prioritaria! 🎉</span>`;
-                spawnHearts(e);
-                input.value = '';
-            }).catch((error) => {
-                console.error("Errore salvataggio Firebase:", error);
-                msg.innerHTML = '<span class="error-text">❌ Errore durante la registrazione. Riprova.</span>';
-            });
+            input.style.borderColor = 'rgba(255, 145, 113, 0.4)';
+            msg.innerHTML = `<span class="success-text">✅ Fantastico ${val}! il tuo nome è in lista prioritaria! </span>`;
+            
+            spawnHearts(e);
+            input.value = '';
         }
     </script>
 </body>
