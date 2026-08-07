@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#fdfbf7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Yuri & Yuri Team comunica</title>
+    <title>Yuri & Yuri Team - Comunica</title>
     
     <!-- GSAP & ScrollTrigger Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -173,29 +173,31 @@
         }
 
         .slide {
-            position: absolute;
-            text-align: center;
-            width: 100%;
-            max-width: 480px;
-            opacity: 0;
-            transform: translateY(40px);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(13, 11, 24, 0.9) 100%);
-            padding: 2rem 1.4rem;
-            border-radius: 28px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            pointer-events: none;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+    opacity: 0;
+    transform: translateY(40px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(13, 11, 24, 0.9) 100%);
+    padding: 2rem 1.4rem;
+    border-radius: 28px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    
+    /* DISABILITA I CLICK DI BASE SU TUTTE LE SLIDE */
+    pointer-events: none; 
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
 
-        /* La prima slide parte subito visibile */
-        .slide.active-slide {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto !important;
-        }
+/* ATTIVA I CLICK SOLO SULLA SLIDE ATTIVA */
+.slide.active-slide {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto !important;
+}
 
         .slide h1, .slide h2 {
             font-family: 'Cinzel', serif;
@@ -509,32 +511,42 @@
         const slides = ["#slide1", "#slide2", "#slide3", "#slide4"];
 
         slides.forEach((slide, index) => {
-            if (index === 0) {
-                // La slide 1 parte già visibile; quando si scrolla sfuma via verso l'alto
-                storyTL.to(slide, { 
-                    opacity: 0, 
-                    y: -40, 
-                    duration: 1,
-                    onLeave: () => document.querySelector(slide).classList.remove('active-slide'),
-                    onEnterBack: () => document.querySelector(slide).classList.add('active-slide')
-                }, "+=0.8");
-            } else {
-                // Le slide successive entrano dal basso
-                storyTL.to(slide, { 
-                    opacity: 1, 
-                    y: 0, 
-                    duration: 1,
-                    onStart: () => {
-                        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active-slide'));
-                        document.querySelector(slide).classList.add('active-slide');
-                    }
-                });
+    const el = document.querySelector(slide);
 
-                if (index < slides.length - 1) {
-                    storyTL.to(slide, { opacity: 0, y: -40, duration: 1 }, "+=0.8");
-                }
+    if (index === 0) {
+        storyTL.to(slide, { 
+            opacity: 0, 
+            y: -40, 
+            duration: 1,
+            onStart: () => el.classList.add('active-slide'),
+            onLeave: () => el.classList.remove('active-slide'),
+            onEnterBack: () => el.classList.add('active-slide')
+        }, "+=0.8");
+    } else {
+        storyTL.to(slide, { 
+            opacity: 1, 
+            y: 0, 
+            duration: 1,
+            onStart: () => {
+                document.querySelectorAll('.slide').forEach(s => s.classList.remove('active-slide'));
+                el.classList.add('active-slide');
+            },
+            onReverseComplete: () => {
+                el.classList.remove('active-slide');
             }
         });
+
+        if (index < slides.length - 1) {
+            storyTL.to(slide, { 
+                opacity: 0, 
+                y: -40, 
+                duration: 1,
+                onComplete: () => el.classList.remove('active-slide'),
+                onInterrupt: () => el.classList.remove('active-slide')
+            }, "+=0.8");
+        }
+    }
+});
 
         gsap.to("#hill1", { y: -100, scrollTrigger: { trigger: ".scrollElement", start: "top top", end: "bottom bottom", scrub: true } });
         gsap.to("#hill2", { y: -50, scrollTrigger: { trigger: ".scrollElement", start: "top top", end: "bottom bottom", scrub: true } });
