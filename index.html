@@ -228,6 +228,36 @@
             width: 100%;
             border-radius: 10px;
             display: block;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-frame img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Modale Schermo Intero per lo Zoom */
+        .image-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 8, 10, 0.92);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+            cursor: zoom-out;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 12px;
+            border: 2px solid var(--gold-primary);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
+            object-fit: contain;
         }
 
         .btn-group {
@@ -292,6 +322,11 @@
     <!-- Contenitore effetti visivi temporanei (Stelle e Soldi) -->
     <div class="floating-effects" id="floatingEffects"></div>
 
+    <!-- Modale Schermo Intero per lo Zoom dell'immagine -->
+    <div class="image-modal" id="imageModal" onclick="closeModal()">
+        <img id="modalImage" src="" alt="Zoom Immagine">
+    </div>
+
     <div class="container">
         <!-- Logo Profilo e Nome al Centro -->
         <div class="profile-center">
@@ -318,11 +353,11 @@
             </div>
         </div>
 
-        <!-- Fase 1: Mostra foto1.png e fa la domanda -->
+        <!-- Fase 1: Mostra foto1.jpeg e fa la domanda -->
         <div class="victory-section" id="victorySection">
             <h2 id="questionTitle">🎉 Combinazione Esatta! Vuoi vedere il cedolino?</h2>
             <div class="photo-frame">
-                <img src="foto1.jpeg" alt="Screen di Verifica">
+                <img src="foto1.jpeg" alt="Screen di Verifica" onclick="openModal(this.src)">
             </div>
             <div class="btn-group" id="answerButtons">
                 <button class="btn-yes" onclick="answerYes()">Sì</button>
@@ -335,7 +370,6 @@
         const target = 1620;
         let attempts = 0;
 
-        // Frasi TROPPO BASSO (10 opzioni per ogni fascia di distanza)
         const lowMessages = {
             close: [
                 "Ci sei quasi vicino, manca pochissimo per il tuo cedolino pieno!",
@@ -375,7 +409,6 @@
             ]
         };
 
-        // Frasi TROPPO ALTO (10 opzioni per ogni fascia di distanza)
         const highMessages = {
             close: [
                 "Stai esagerando di un soffio, abbassa leggermente l'asticella!",
@@ -410,7 +443,7 @@
                 "Stai quotando in borsa l'intero pianeta Terra, scendi sul serio!",
                 "Fermati! Stai stampando moneta falsa a livelli industriali.",
                 "Qui non siamo a Sanremo, qui stai comprando l'intera galassia di Andromeda!",
-                " Numeri da fantascienza pura, il sistema è in tilt per l'eccesso di ricchezza!",
+                "Numeri da fantascienza pura, il sistema è in tilt per l'eccesso di ricchezza!",
                 "Ma dove le prendi queste cifre? Nemmeno i banchieri più pazzi arrivano a tanto!"
             ]
         };
@@ -469,8 +502,8 @@
 
             setTimeout(() => {
                 document.getElementById('questionTitle').innerHTML = "📜 Ecco il tuo cedolino ufficiale! 📜";
-                const frame = document.querySelector('.photo-frame img');
-                frame.src = "foto2.jpeg"; 
+                const frameImg = document.querySelector('.photo-frame img');
+                frameImg.src = "foto2.jpeg"; 
                 document.getElementById('answerButtons').style.display = 'none';
 
                 confetti({
@@ -480,6 +513,19 @@
                     colors: ['#d4af37', '#f3e5ab', '#aa7c11', '#ffffff']
                 });
             }, 800);
+        }
+
+        // Funzioni per gestire lo zoom a schermo intero
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = src;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
         }
 
         function triggerMoneyAndStars() {
