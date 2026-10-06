@@ -246,9 +246,10 @@
             align-items: center;
             justify-content: center;
             z-index: 100;
-            overflow: auto; /* Consente il pinch-to-zoom nativo e lo scorrimento fluido su mobile */
+            overflow: auto;
             -webkit-overflow-scrolling: touch;
             animation: fadeIn 0.3s ease-out;
+            cursor: zoom-out;
         }
 
         .modal-content-wrapper {
@@ -268,8 +269,6 @@
             border: 2px solid var(--gold-primary);
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
             object-fit: contain;
-            cursor: zoom-out;
-            transition: transform 0.2s ease;
         }
 
         .btn-group {
@@ -334,17 +333,17 @@
     <!-- Effetti visivi temporanei -->
     <div class="floating-effects" id="floatingEffects"></div>
 
-    <!-- Modale Schermo Intero con Zoom Mobile -->
-    <div class="image-modal" id="imageModal" onclick="handleModalClick(event)">
+    <!-- Modale Schermo Intero (Tap ovunque per chiudere o zoomare con le dita) -->
+    <div class="image-modal" id="imageModal" onclick="closeModal()">
         <div class="modal-content-wrapper">
-            <img id="modalImage" src="" alt="Zoom Immagine" onclick="toggleZoom(event)">
+            <img id="modalImage" src="" alt="Zoom Immagine" onclick="event.stopPropagation()">
         </div>
     </div>
 
     <div class="container">
         <!-- Logo Profilo e Nome al Centro -->
         <div class="profile-center">
-            <img src="profilo_yuri.svg" alt="Logo Yuri Cantone">
+            <img src="profilo_yuri.svg" alt="Logo Yuri Cantone" onclick="openModal(this.src)">
             <div class="name-title">Yuri Cantone</div>
             <div class="badge-sub">Cedolino &bull; Casinò Sanremo</div>
         </div>
@@ -529,37 +528,18 @@
             }, 800);
         }
 
-        // Gestione apertura e chiusura modale con zoom
+        // Apertura modale a schermo intero
         function openModal(src) {
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImage');
             modalImg.src = src;
-            modalImg.style.transform = "scale(1)"; // Reset dello zoom precedente
             modal.style.display = 'flex';
         }
 
+        // Chiusura modale (al tap ovunque sullo sfondo o sulla foto)
         function closeModal() {
             const modal = document.getElementById('imageModal');
             modal.style.display = 'none';
-        }
-
-        function handleModalClick(event) {
-            // Chiude la modale se si clicca sullo sfondo nero vuoto
-            if (event.target.id === 'imageModal') {
-                closeModal();
-            }
-        }
-
-        function toggleZoom(event) {
-            event.stopPropagation(); // Evita che il click chiuda la modale direttamente
-            const img = document.getElementById('modalImage');
-            
-            // Se è già zoommata, la riporta normale, altrimenti la ingrandisce
-            if (img.style.transform && img.style.transform !== "scale(1)") {
-                img.style.transform = "scale(1)";
-            } else {
-                img.style.transform = "scale(2)";
-            }
         }
 
         function triggerMoneyAndStars() {
